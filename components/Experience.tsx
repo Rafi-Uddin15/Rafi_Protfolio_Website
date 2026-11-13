@@ -1,216 +1,105 @@
-"use client";
-
-const experiences = [
-    {
-        role: "AI Intern",
-        company: "Musemind",
-        period: "Aug 2025 – Feb 2026",
-        type: "Artificial Intelligence & Product Development",
-        bullets: [
-            "Worked closely with the founding team on AI-powered product features across ideation and prototyping and deployment.",
-            "Developed and fine-tuned machine learning models for real-world business use cases to improve prediction accuracy.",
-            "Collaborated cross-functionally with designers and engineers to integrate AI capabilities into the product suite.",
-            "Conducted data analysis and model evaluation then presented findings and recommendations to senior leadership.",
-        ],
-    },
-    {
-        role: "Campus Captain",
-        company: "OSTAD (EdTech Platform)",
-        period: "Spring 2024",
-        type: "Business Development & Strategy",
-        bullets: [
-            "Drove 30% engagement growth by executing go-to-market strategies for technical workshops.",
-            "Acted as primary liaison between OSTAD and a 3000+ student community to build brand trust and awareness.",
-            "Managed end-to-end operations for campus events including vendor coordination and participant onboarding for 200+ attendees.",
-            "Led a team of 10 volunteers while delegating tasks and ensuring KPI achievement across all campaigns.",
-        ],
-    },
-    {
-        role: "Senior Associate",
-        company: "East West University Sports Club",
-        period: "2022 – 2023",
-        type: "Operations & Stakeholder Management",
-        bullets: [
-            "Spearheaded logistics for EWU Cricketers Cup (300+ participants) and EWU 5K Run (500+ participants) with zero budget overruns.",
-            "Conducted post-event analysis to identify bottlenecks and reduce operational costs by 15%.",
-            "Built and managed relationships with 10+ external vendors and negotiated contracts to maximize value.",
-            "Mentored 5 junior associates in project management and stakeholder communication.",
-        ],
-    },
-];
+import Image from "next/image";
+import { credentials, education, experience, toolkit } from "@/data/portfolio";
+import Link from "next/link";
 
 export default function Experience() {
-    return (
-        <section
-            id="experience"
-            style={{
-                padding: "100px clamp(1.5rem, 5vw, 6rem)",
-                maxWidth: 900,
-                margin: "0 auto",
-            }}
-        >
-            <p className="section-heading reveal">Experience</p>
-            <h2 className="section-title reveal">Professional Journey</h2>
+  return (
+    <section id="experience" aria-labelledby="exp-title" className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
+      <h2 id="exp-title" className="max-w-2xl text-4xl font-semibold tracking-[-0.02em] sm:text-5xl">
+        Where I&rsquo;ve done it
+      </h2>
 
-            <div
-                style={{
-                    position: "relative",
-                    paddingLeft: 32,
-                }}
-            >
-                {/* Timeline line */}
-                <div
-                    style={{
-                        position: "absolute",
-                        left: 7,
-                        top: 0,
-                        bottom: 0,
-                        width: 2,
-                        background:
-                            "linear-gradient(180deg, #6366f1, rgba(99,102,241,0.1))",
-                        borderRadius: 2,
-                    }}
+      <ol className="mt-12 space-y-0">
+        {experience.map((r) => (
+          <li
+            key={r.org}
+            className="grid gap-3 border-t border-rule py-8 md:grid-cols-[10rem_minmax(0,18rem)_1fr] md:gap-8"
+          >
+            <p className="tabular text-sm text-muted md:pt-1">{r.period}</p>
+            <div className="flex items-start gap-3">
+              {r.logo ? (
+                <Image
+                  src={r.logo}
+                  alt=""
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 shrink-0 rounded-lg border border-rule bg-sheet object-contain p-1"
                 />
-
-                {experiences.map((exp, i) => (
-                    <div
-                        key={i}
-                        className={`reveal reveal-delay-${i + 1}`}
-                        style={{
-                            position: "relative",
-                            marginBottom: 48,
-                        }}
-                    >
-                        {/* Timeline dot */}
-                        <div
-                            style={{
-                                position: "absolute",
-                                left: -32,
-                                top: 8,
-                                width: 16,
-                                height: 16,
-                                borderRadius: "50%",
-                                background: i === 0 ? "#34d399" : "#6366f1",
-                                border: "3px solid #0a0a0f",
-                                boxShadow: i === 0
-                                    ? "0 0 12px rgba(52,211,153,0.4)"
-                                    : "0 0 12px rgba(99,102,241,0.4)",
-                            }}
-                        />
-
-                        {/* Current badge for latest role */}
-                        {i === 0 && (
-                            <div
-                                style={{
-                                    position: "absolute",
-                                    left: -32,
-                                    top: -18,
-                                    fontSize: "0.6rem",
-                                    fontWeight: 700,
-                                    color: "#34d399",
-                                    textTransform: "uppercase",
-                                    letterSpacing: "1.5px",
-                                    whiteSpace: "nowrap",
-                                    marginLeft: -4,
-                                }}
-                            >
-                                Recent
-                            </div>
-                        )}
-
-                        <div className="glass-card" style={{ padding: "28px 32px" }}>
-                            <div
-                                style={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "flex-start",
-                                    flexWrap: "wrap",
-                                    gap: 8,
-                                    marginBottom: 8,
-                                }}
-                            >
-                                <div>
-                                    <h3
-                                        style={{
-                                            fontSize: "1.15rem",
-                                            fontWeight: 700,
-                                            color: "#e8e8ed",
-                                        }}
-                                    >
-                                        {exp.role}
-                                    </h3>
-                                    <p
-                                        style={{
-                                            fontSize: "0.95rem",
-                                            color: "#818cf8",
-                                            fontWeight: 500,
-                                        }}
-                                    >
-                                        {exp.company}
-                                    </p>
-                                </div>
-                                <span
-                                    style={{
-                                        fontSize: "0.8rem",
-                                        color: i === 0 ? "#34d399" : "#6b7280",
-                                        fontWeight: 500,
-                                        padding: "4px 14px",
-                                        background: i === 0
-                                            ? "rgba(52,211,153,0.08)"
-                                            : "rgba(99,102,241,0.08)",
-                                        borderRadius: 999,
-                                        border: i === 0
-                                            ? "1px solid rgba(52,211,153,0.2)"
-                                            : "1px solid rgba(99,102,241,0.15)",
-                                        whiteSpace: "nowrap",
-                                    }}
-                                >
-                                    {exp.period}
-                                </span>
-                            </div>
-
-                            <p
-                                style={{
-                                    fontSize: "0.8rem",
-                                    fontWeight: 600,
-                                    color: "#6b7280",
-                                    textTransform: "uppercase",
-                                    letterSpacing: "1px",
-                                    marginBottom: 14,
-                                }}
-                            >
-                                {exp.type}
-                            </p>
-
-                            <ul
-                                style={{
-                                    listStyle: "none",
-                                    padding: 0,
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    gap: 10,
-                                }}
-                            >
-                                {exp.bullets.map((b, j) => (
-                                    <li
-                                        key={j}
-                                        style={{
-                                            display: "flex",
-                                            gap: 10,
-                                            fontSize: "0.9rem",
-                                            color: "#9ca3af",
-                                            lineHeight: 1.7,
-                                        }}
-                                    >
-                                        <span style={{ color: "#6366f1", flexShrink: 0 }}>▸</span>
-                                        {b}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                ))}
+              ) : (
+                <span aria-hidden="true" className="h-10 w-10 shrink-0 rounded-lg border border-rule bg-sheet" />
+              )}
+              <div>
+                <h3 className="font-sans text-base font-semibold leading-tight">{r.title}</h3>
+                <p className="text-sm text-muted">{r.org}</p>
+              </div>
             </div>
-        </section>
-    );
+            <ul className="space-y-2 text-[0.95rem] leading-relaxed">
+              {r.points.map((p) => (
+                <li key={p} className="relative pl-4 before:absolute before:left-0 before:top-[0.7em] before:h-1 before:w-1 before:rounded-full before:bg-push-bar">
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ol>
+
+      <div className="mt-16 grid gap-12 border-t border-rule pt-12 lg:grid-cols-[1fr_1.4fr]">
+        <div>
+          <h3 className="text-2xl font-semibold tracking-tight">Education & credentials</h3>
+          <p className="mt-4 font-medium">{education.degree}</p>
+          <p className="text-muted">
+            {education.school}, {education.year}
+          </p>
+          <ul className="mt-2 text-sm text-muted">
+            {education.notes.map((n) => (
+              <li key={n}>{n}</li>
+            ))}
+          </ul>
+          <ul className="mt-6 space-y-2 text-sm">
+            {credentials.map((c) => (
+              <li key={c.label}>
+                <a href={c.href} target="_blank" rel="noopener noreferrer" className="text-pull underline-offset-4 hover:underline">
+                  {c.label}
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-2xl font-semibold tracking-tight">Toolkit, with receipts</h3>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-ink/20 text-muted">
+                  <th scope="col" className="py-2 pr-4 font-medium">Tool</th>
+                  <th scope="col" className="py-2 pr-4 font-medium">What I use it for</th>
+                  <th scope="col" className="py-2 font-medium">Shown in</th>
+                </tr>
+              </thead>
+              <tbody>
+                {toolkit.map((t) => (
+                  <tr key={t.tool} className="border-b border-rule align-top">
+                    <th scope="row" className="py-3 pr-4 font-semibold whitespace-nowrap">{t.tool}</th>
+                    <td className="py-3 pr-4 text-muted">{t.use}</td>
+                    <td className="py-3 whitespace-nowrap">
+                      {t.proof ? (
+                        <Link href={t.proof.href} className="text-pull underline-offset-4 hover:underline">
+                          {t.proof.label}
+                        </Link>
+                      ) : (
+                        <span className="text-muted">Ask me</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }

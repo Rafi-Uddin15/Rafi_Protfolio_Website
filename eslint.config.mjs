@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Separate deploy snapshot with its own config
+    "vercel-upload/**",
+    "_archive/**",
   ]),
 ]);
 
