@@ -1,283 +1,113 @@
 @import "tailwindcss";
 
-/* ============================
-   CUSTOM PROPERTIES & THEME
-   ============================ */
-:root {
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #12121a;
-  --bg-card: rgba(20, 20, 35, 0.7);
-  --bg-glass: rgba(255, 255, 255, 0.03);
-  --border-glass: rgba(255, 255, 255, 0.08);
-  --text-primary: #e8e8ed;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
-  --accent: #6366f1;
-  --accent-light: #818cf8;
-  --accent-glow: rgba(99, 102, 241, 0.15);
-  --gradient-start: #6366f1;
-  --gradient-mid: #8b5cf6;
-  --gradient-end: #a78bfa;
-  --success: #34d399;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
+/*
+ * Design tokens. Palette is taken from SHAP explanation plots, the subject of Rafi's research:
+ *   paper  - cool chart-paper grey, the plot background
+ *   ink    - navy plot ink for text and axes        (15.7:1 on paper)
+ *   muted  - secondary text                         (6.8:1 on paper)
+ *   push   - SHAP "pushes the prediction up" magenta. #FF0051 for bars (graphics, 3.5:1),
+ *            #D1003F wherever it carries text      (5.0:1 on paper)
+ *   pull   - SHAP "pulls it down" blue. #0062C4 for text and links
+ * Contrast ratios computed, not estimated.
+ */
+@theme {
+  --color-paper: #f3f4f6;
+  --color-sheet: #ffffff;
+  --color-ink: #0f1b2d;
+  --color-muted: #4b5566;
+  --color-rule: #d5d9e0;
+  --color-push: #d1003f;
+  --color-push-bar: #ff0051;
+  --color-pull: #0062c4;
+  --color-pull-bar: #008bfb;
+
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* ============================
-   BASE RESET & TYPOGRAPHY
-   ============================ */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-push-bar);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-pull);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
 }
 
-html {
-  scroll-behavior: smooth;
-  scrollbar-width: thin;
-  scrollbar-color: var(--accent) var(--bg-secondary);
+@utility tabular {
+  font-variant-numeric: tabular-nums;
 }
 
-body {
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  line-height: 1.7;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Signature moment: bars grow from the axis in order, like a SHAP waterfall being computed. */
+@keyframes bar-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--accent);
-  border-radius: 3px;
+@keyframes label-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-::selection {
-  background: var(--accent);
-  color: #fff;
+.bar-grow {
+  transform-origin: var(--origin, left);
+  animation: bar-grow 700ms var(--ease-out-soft) both;
+  animation-delay: calc(var(--i, 0) * 110ms + 200ms);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+.label-in {
+  animation: label-in 400ms ease-out both;
+  animation-delay: calc(var(--i, 0) * 110ms + 450ms);
 }
 
-/* ============================
-   ANIMATED GRADIENT BACKGROUND
-   ============================ */
-.gradient-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.gradient-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.4;
-  animation: float 20s ease-in-out infinite;
-}
-
-.gradient-orb:nth-child(1) {
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, var(--gradient-start), transparent 70%);
-  top: -200px;
-  right: -100px;
-  animation-delay: 0s;
-}
-
-.gradient-orb:nth-child(2) {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, var(--gradient-mid), transparent 70%);
-  bottom: -150px;
-  left: -100px;
-  animation-delay: -7s;
-}
-
-.gradient-orb:nth-child(3) {
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, var(--gradient-end), transparent 70%);
-  top: 40%;
-  left: 50%;
-  animation-delay: -14s;
-}
-
-@keyframes float {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(30px, -50px) scale(1.1); }
-  50% { transform: translate(-20px, 20px) scale(0.95); }
-  75% { transform: translate(40px, 30px) scale(1.05); }
-}
-
-/* ============================
-   GLASSMORPHISM CARD
-   ============================ */
-.glass-card {
-  background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-glass);
-  border-radius: var(--radius-lg);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.glass-card:hover {
-  border-color: rgba(99, 102, 241, 0.3);
-  box-shadow: 0 8px 32px var(--accent-glow);
-  transform: translateY(-4px);
-}
-
-/* ============================
-   SCROLL REVEAL ANIMATIONS
-   ============================ */
-.reveal {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.reveal-delay-1 { transition-delay: 0.1s; }
-.reveal-delay-2 { transition-delay: 0.2s; }
-.reveal-delay-3 { transition-delay: 0.3s; }
-.reveal-delay-4 { transition-delay: 0.4s; }
-
-/* ============================
-   SECTION STYLING
-   ============================ */
-.section-heading {
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  color: var(--accent-light);
-  margin-bottom: 0.75rem;
-}
-
-.section-title {
-  font-size: clamp(2rem, 4vw, 2.75rem);
-  font-weight: 800;
-  line-height: 1.2;
-  background: linear-gradient(135deg, var(--text-primary), var(--accent-light));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 1rem;
-}
-
-/* ============================
-   BUTTON STYLES
-   ============================ */
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 32px;
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-mid));
-  color: #fff;
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: none;
-  border-radius: var(--radius-xl);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-primary::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, var(--gradient-mid), var(--gradient-end));
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px var(--accent-glow);
-}
-
-.btn-primary:hover::before {
-  opacity: 1;
-}
-
-.btn-primary span {
-  position: relative;
-  z-index: 1;
-}
-
-.btn-outline {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 32px;
-  background: transparent;
-  color: var(--accent-light);
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: 2px solid var(--accent);
-  border-radius: var(--radius-xl);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-outline:hover {
-  background: var(--accent-glow);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px var(--accent-glow);
-}
-
-/* ============================
-   SKILL TAGS
-   ============================ */
-.skill-tag {
-  display: inline-block;
-  padding: 6px 16px;
-  background: var(--accent-glow);
-  color: var(--accent-light);
-  font-size: 0.8rem;
-  font-weight: 500;
-  border-radius: 999px;
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  transition: all 0.3s ease;
-}
-
-.skill-tag:hover {
-  background: rgba(99, 102, 241, 0.25);
-  border-color: var(--accent);
-  transform: translateY(-2px);
-}
-
-/* ============================
-   RESPONSIVE
-   ============================ */
-@media (max-width: 768px) {
-  .section-title {
-    font-size: 1.75rem;
+@media (prefers-reduced-motion: reduce) {
+  .bar-grow,
+  .label-in {
+    animation: none;
   }
 }
