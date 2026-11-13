@@ -1,0 +1,8 @@
+# Keep personal files and unused copies out of Vercel uploads
+.career-agent
+CV_OUTPUT
+*.docx
+vercel-upload
+_archive
+.claude
+start-portfolio.cmd
